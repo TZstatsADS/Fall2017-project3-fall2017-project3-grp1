@@ -10,7 +10,7 @@ Term: Fall 2017
 + Team members
 	+ team member 1
 	+ team member 2
-	+ team member 3
+	+ Yi Zhang
 	+ team member 4
 	+ team member 5
 
