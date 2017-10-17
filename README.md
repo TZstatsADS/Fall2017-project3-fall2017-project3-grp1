@@ -10,7 +10,7 @@ Term: Fall 2017
 + Team members
 	+ Christina Huang
 	+ team member 2
-	+ team member 3
+	+ Yi Zhang
 	+ Joaquim Lyrio
 	+ team member 5
 
