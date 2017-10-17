@@ -8,11 +8,10 @@ Term: Fall 2017
 
 + Team #
 + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
+	+ Christina Huang
+	+ Yi Zhang
 	+ Joaquim Lyrio
-	+ team member 5
+	+ Jing Zhao
 
 + Project summary: In this project, we created a classification engine for images of dogs versus fried chicken versus blueberry muffins. 
 	
