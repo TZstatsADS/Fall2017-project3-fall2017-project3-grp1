@@ -8,7 +8,7 @@ Term: Fall 2017
 
 + Team #
 + Team members
-	+ team member 1
+	+ Christina Huang
 	+ team member 2
 	+ team member 3
 	+ team member 4
