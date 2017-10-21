@@ -27,7 +27,7 @@ train <- function(dat_train, label_train, par=NULL){
   }
   fit_gbm <- gbm.fit(x=dat_train, y=label_train,
                      n.trees=2000,
-                     distribution="bernoulli",
+                     distribution="multinomial",
                      interaction.depth=depth, 
                      bag.fraction = 0.5,
                      verbose=FALSE)
