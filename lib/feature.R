@@ -2,38 +2,43 @@
 ### Construct visual features for training/testing images ###
 #############################################################
 
-### Authors: Yuting Ma/Tian Zheng
+### Authors: Christina Huang yh2859
 ### Project 3
-### ADS Spring 2017
+### ADS Fall 2017
 
-feature <- function(img_dir, set_name, data_name="data", export=T){
+feature <- function(img_dir, export=T){
   
   ### Construct process features for training/testing images
-  ### Sample simple feature: Extract row average raw pixel values as features
+  ### Feature: HOG Values for each photos
   
   ### Input: a directory that contains images ready for processing
-  ### Output: an .RData file contains processed features for the images
-  
-  ### load libraries
+  ### Output: a matrix contains processed features for the images
+
   library("EBImage")
+  library("OpenImageR")
+  
+  #img_dir <- "../data/zipcode/test"
   
   n_files <- length(list.files(img_dir))
+  dir_names <- list.files(img_dir) # determine img dimensions
   
-  ### determine img dimensions
-  img0 <-  readImage(paste0(img_dir, "img", "_", data_name, "_", set_name, "_", 1, ".jpg"))
-  mat1 <- as.matrix(img0)
-  n_r <- nrow(img0)
-  
+  H <- matrix(NA, n_files, 54) # save HOG Values, each row indicating each photo
+
   ### store vectorized pixel values of images
   dat <- matrix(NA, n_files, n_r) 
   for(i in 1:n_files){
-    img <- readImage(paste0(img_dir,  "img", "_", data_name, "_", set_name, "_", i, ".jpg"))
-    dat[i,] <- rowMeans(img)
+    img <- readImage(paste(img_dir, dir_names[i], sep = "/"))
+    h <- HOG(img)
+    H[i,] <- h
   }
   
   ### output constructed features
   if(export){
-    save(dat, file=paste0("../output/feature_", data_name, "_", set_name, ".RData"))
+    save(H, file=paste0("../output/HOG.RData"))
   }
-  return(dat)
+  return(H)
 }
+
+
+
+
