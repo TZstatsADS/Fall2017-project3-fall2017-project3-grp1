@@ -1,12 +1,13 @@
 #############################################################
-### Construct visual features for training/testing images ###
+### Construct visual features for training/testing images
+### function "feature_HOG"
 #############################################################
 
 ### Authors: Christina Huang yh2859
 ### Project 3
 ### ADS Fall 2017
 
-feature <- function(img_dir, export=T){
+feature_HOG <- function(img_dir, export=T){
   
   ### Construct process features for training/testing images
   ### Feature: HOG Values for each photos
