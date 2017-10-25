@@ -1,4 +1,4 @@
-# Project: Dogs, Fried Chicken or Blueberry Muffins?
+﻿# Project: Dogs, Fried Chicken or Blueberry Muffins?
 ![image](figs/chicken.jpg)
 ![image](figs/muffin.jpg)
 
@@ -6,9 +6,10 @@
 
 Term: Fall 2017
 
-+ Team #
++ Team 1
 + Team members
 	+ Christina Huang
+	+ Henrique Saboya
 	+ Yi Zhang
 	+ Joaquim Lyrio
 	+ Jing Zhao
