@@ -18,7 +18,7 @@ feature_HOG <- function(img_dir, export=T){
   library("EBImage")
   library("OpenImageR")
   
-  #img_dir <- "../data/zipcode/test"
+  #img_dir <- "../data/zipcode/train"
   
   n_files <- length(list.files(img_dir))
   dir_names <- list.files(img_dir) # determine img dimensions
