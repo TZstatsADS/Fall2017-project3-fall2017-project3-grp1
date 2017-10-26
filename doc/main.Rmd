@@ -29,7 +29,7 @@ library("gbm")
 Set the working directory to the image folder. Specify the training and the testing set. For data without an independent test/validation set, you need to create your own testing data by random subsampling. In order to obain reproducible results, set.seed() whenever randomization is used. 
 
 ```{r wkdir, eval=FALSE}
-setwd("./ads_spr2017_proj3") 
+setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1") 
 # here replace it with your own path or manually set it in RStudio to where this rmd file is located. 
 ```
 
@@ -38,7 +38,7 @@ Provide directories for raw images. Training set and test set should be in diffe
 experiment_dir <- "../data/zipcode/" # This will be modified for different data sets.
 img_train_dir <- paste(experiment_dir, "train/", sep="")
 img_test_dir <- paste(experiment_dir, "test/", sep="")
-```
+7y3```
 
 ### Step 1: set up controls for evaluation experiments.
 
