@@ -6,7 +6,8 @@
 ### Project 3
 ### ADS Fall 2017
 
-feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, desired_variance = 0.9, run.pca = T, export = T){
+feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, desired_variance = 0.9, n_hogs = 54,
+                    run.pca = T, run.hogs = T, export = T){
   
   ### Construct process features for training/testing images
   ### Sample simple feature: Extract row average raw pixel values as features
@@ -15,8 +16,9 @@ feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, desi
   ### Output: an .RData file contains processed features for the images
   
   ### load libraries
-  library(EBImage)
-  library(jpeg)
+  library("EBImage")
+  library("jpeg")
+  library("OpenImageR")
   
   img.pca <- function (dat, desired_variance = 0.9){  
     
@@ -31,7 +33,7 @@ feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, desi
     return(dat)
   }
   
-  n_files <- length(list.files(img_dir)[-1])
+  n_files <- length(list.files(img_dir))
   
   ### determine img dimensions
   img0 <-  readImage(paste0(img_dir, "img_", do.call(paste, c(as.list(rep("0",(n_dig-1))), sep = "")), 1, ".jpg"))
@@ -43,19 +45,34 @@ feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, desi
   
   ### store vectorized pixel values of images
   dat <- matrix(NA, n_files, n_c) 
+  if(run.hogs){H <- matrix(NA, n_files, n_hogs)}
+  
   for(i in 1:n_files){
     img <- readImage(paste0(img_dir,  "img_", do.call(paste, c(as.list(rep("0",(n_dig-nchar(i)))), sep = "")), i, ".jpg"))
     img <- resize(img, n_pixel_row, n_pixel_col)
     dat[i,] <- img
+    
+    if(run.hogs){
+    h <- HOG(img)
+    H[i,] <- h
+    }
   }
   
+  
   if(run.pca){
-    dat <- img.pca(dat, desired_variance)
+    dat.pca <- img.pca(dat, desired_variance)
   }
   
   ### output constructed features
   if(export){
-    write.csv(dat, file=paste0("../output/feature_PCA.csv"))
-  }
+    
+    if(run.pca){save(dat.pca, file=paste0("../output/feature_PCA.RData"))}
+    
+    if(run.hogs){save(H, file=paste0("../output/HOG.RData"))}
+    
+    }
+  
+  dat <- cbind(dat.pca, H)
+  
   return(dat)
 }
