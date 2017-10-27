@@ -75,6 +75,7 @@ set.seed(seed)
 custom <- train(as.factor(labels)~., data=dataset, method=customRF, metric=metric, tuneGrid=tunegrid, trControl=control)
 summary(custom)
 plot(custom)
+## The optimal parameters are ntree = 1500 and mtry = 10.
 ```
 
 
