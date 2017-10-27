@@ -1,0 +1,81 @@
+---
+title: "Random Forest"
+author: "Jing Zhao (jz2786)"
+date: "10/26/2017"
+output: pdf_document
+---
+
+## Preparation
+```{r}
+install.packages('randomForest')
+library(randomForest)
+install.packages('caret')
+install.packages('e1071')
+library(caret)
+library(e1071)
+```
+
+## Load Data
+```{r}
+features <- read.csv('../data/feature_HOG.csv')
+features <- features[,-1]
+labels_set <- read.csv('../data/training_set/label_train.csv')
+labels <- labels_set[,2]
+dataset <- cbind(labels,features)
+```
+
+## First Try without PCA
+```{r}
+#-----------------------train and test--------------------------
+set.seed(123)
+values <- seq(1,3000)
+id <- sample(values,1500,replace = FALSE)
+train_id <- id
+test_id <- setdiff(values,train_id)
+train <- dataset[train_id,]
+test <- dataset[test_id,]
+train_labels <- train[,1]
+train_features <- train[,2:ncol(train)]
+test_labels <- test[,1]
+test_features <- test[,2:ncol(test)]
+
+#-----------------------Random Forest--------------------------
+
+fit <- randomForest(as.factor(train_labels) ~ .,
+                    data = train_features, mtry = 20,
+                      importance=TRUE, 
+                      ntree=2000)
+
+varImpPlot(fit) # Help us to understand what variables were important
+imp <- as.data.frame(sort(importance(fit)[,1],decreasing = TRUE),optional = T)
+names(imp) <- "% Inc MSE"
+imp
+Prediction <- predict(fit, test_features)
+Accuracy <- sum(Prediction == test_labels)/length(test_labels)
+
+#--------------Caret Package for Tuning Parameters-------------
+#----------------Two Parameters: mtry & ntree------------------
+
+customRF <- list(type = "Classification", library = "randomForest", loop = NULL)
+customRF$parameters <- data.frame(parameter = c("mtry", "ntree"), class = rep("numeric", 2), label = c("mtry", "ntree"))
+customRF$grid <- function(x, y, len = NULL, search = "grid") {}
+customRF$fit <- function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+  randomForest(x, y, mtry = param$mtry, ntree=param$ntree, ...)
+}
+customRF$predict <- function(modelFit, newdata, preProc = NULL, submodels = NULL)
+   predict(modelFit, newdata)
+customRF$prob <- function(modelFit, newdata, preProc = NULL, submodels = NULL)
+   predict(modelFit, newdata, type = "prob")
+customRF$sort <- function(x) x[order(x[,1]),]
+customRF$levels <- function(x) x$classes
+
+control <- trainControl(method="repeatedcv", number=5, repeats=2)
+tunegrid <- expand.grid(.mtry=c(5:15), .ntree=c(1000, 1500, 2000, 2500))
+set.seed(seed)
+custom <- train(as.factor(labels)~., data=dataset, method=customRF, metric=metric, tuneGrid=tunegrid, trControl=control)
+summary(custom)
+plot(custom)
+```
+
+
+
