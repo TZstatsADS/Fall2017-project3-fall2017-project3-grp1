@@ -67,12 +67,12 @@ gbmFit <- function( dat_train, label_train, par ){
   }
   
   ## fit model
-  fitGbm <- gbm.fit(x=dat_train[,2:ncol(dat_train)], y=label_train[,2],
-                     n.trees = 50,
-                     distribution="multinomial",
-                     interaction.depth=depth, 
+  fitGbm <- gbm.fit(x = dat_train, y=label_train[,2],
+                     n.trees = 20,
+                     distribution = "multinomial",
+                     interaction.depth = depth, 
                      bag.fraction = 0.5,
-                     verbose=FALSE)
+                     verbose = FALSE)
   
   best_iter <- gbm.perf(fitGbm, method="OOB", plot.it = FALSE)
   
@@ -86,8 +86,17 @@ randomForestFit <- function( dat_train, label_train ){ # fill with necessary par
 }
 
 ## SVM model
-svmFit <- function( dat_train, label_train, par ){ # fill with necessary parameters
+svmFit <- function( dat_train, label_train, par ){ 
   
+  if(!require("e1071")){
+    install.packages("e1071")
+  }
+  
+  library("e1071")
+  
+  svm.model <- svm(dat_train, label_train[,2], type = "C", kernel = "radial", gamma = par)
+  
+  return(list(fit = svm.model))
 }
 
 ## CNN model
