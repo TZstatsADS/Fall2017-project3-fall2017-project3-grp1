@@ -190,27 +190,42 @@ Visualize cross-validation results.
 
 ```{r cv_vis, warning=F}
 if(run.cv){
-  load("../output/err_cv.RData")
-  #pdf("../fig/cv_results.pdf", width=7, height=5)
-  plot(model_values, err_cv[,1], xlab="Interaction Depth", ylab="CV Error",
-       main="Cross Validation Error", type="n", ylim=c(0, 1))
-  points(model_values, err_cv[,1], col="blue", pch=16)
-  lines(model_values, err_cv[,1], col="blue")
-  arrows(model_values, err_cv[,1]-err_cv[,2], model_values, err_cv[,1]+err_cv[,2], 
-        length=0.1, angle=90, code=3)
-  #dev.off()
+  
+  if(cv.gbm){
+    load("../output/err_cv.RData")
+    #pdf("../fig/cv_results.pdf", width=7, height=5)
+    plot(model_values, err_cv[,1], xlab="Interaction Depth", ylab="CV Error",
+         main="Cross Validation Error", type="n", ylim=c(0, 1))
+    points(model_values, err_cv[,1], col="blue", pch=16)
+    lines(model_values, err_cv[,1], col="blue")
+    arrows(model_values, err_cv[,1]-err_cv[,2], model_values, err_cv[,1]+err_cv[,2], 
+    length=0.1, angle=90, code=3)
+    #dev.off()
+    }
+  
+  if(cv.svm){
+    load("../output/err_cv.RData")
+    #pdf("../fig/cv_results.pdf", width=7, height=5)
+    plot(svm_gamma_values, err_cv[,1], xlab="Interaction Depth", ylab="CV Error",
+         main="Cross Validation Error", type="n", ylim=c(0, 1))
+    points(svm_gamma_values, err_cv[,1], col="blue", pch=16)
+    lines(svm_gamma_values, err_cv[,1], col="blue")
+    arrows(svm_gamma_values, err_cv[,1]-err_cv[,2], svm_gamma_values, err_cv[,1]+err_cv[,2], 
+    length=0.1, angle=90, code=3)
+    
 }
 ```
 
 
 * Choose the "best"" parameter value
 ```{r best_model, warning=F}
-model_best=model_values[1]
+model_best = svm_gamma_values[1]
+
 if(run.cv){
-  model_best <- model_values[which.min(err_cv[,1])]
+  model_best <- svm_gamma_values[which.min(err_cv[,1])]
 }
 
-par_best <- list(depth=model_best)
+par_best <- list(gamma=model_best)
 ```
 
 * Train the model with the entire training set using the selected model (model parameter) via cross-validation.
@@ -218,7 +233,7 @@ par_best <- list(depth=model_best)
 
 model.lda <- train( dat_train, label_train, run.lda = TRUE )
 
-model.svm <- train( dat_train, label_train, run.svm = TRUE, par = svm_gamma_values[1] )
+model.svm <- train( dat_train, label_train, run.svm = TRUE, par = model_best )
 
 
 tm_train=NA
@@ -232,7 +247,7 @@ save(fit_train, file="../output/fit_train.RData")
 
 model.lda <- test(model.lda, dat_test, test.lda = T)
 
-
+model.svm <- test(model.svm, dat_test, test.svm = T)
 ```
 
 ### Summarize Running Time
