@@ -28,7 +28,7 @@ library("MASS")
 
 # here replace it with your own path or manually set it in RStudio to where this rmd file is located.
 ```{r wkdir, eval=FALSE}
-setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1/doc") 
+#setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1/doc") 
 ```
 
 ```{r, warning=F}
@@ -62,7 +62,7 @@ run.lbp = FALSE
 
 # Boolean variables for running model
 run.gbm = FALSE
-run.svm = FALSE
+run.svm = TRUE
 run.rf = FALSE
 run.lda = TRUE
 ```
@@ -73,8 +73,11 @@ Using cross-validation or independent test set evaluation, we compare the perfor
 ## Add stuff here to call different models
 
 ```{r model_setup, warning=F}
-model_values <- seq(4, 8, 2) # for GBM
+model_values <- seq(3, 11, 2) # for GBM
 model_labels = paste("GBM with depth =", model_values) # for GBM
+
+svm_gamma_values <- seq(0, 2, by = 0.5)
+svm_gamma_labels = paste("SVM gamma =", svm_gamma_values) # for SVM
 ```
 
 ### Step 2: import training images class labels.
@@ -138,24 +141,46 @@ Call the train model and test model from library.
 source("../lib/train - final.R")
 source("../lib/test - final.R")
 
-# DO: train selected models
-model <- train( dat_train, label_train, run.gbm = TRUE )
-
+load("../output/feature_train.RData")
+load("../output/feature_test.RData")
 ```
 
 
 #### Model selection with cross-validation
-* Do model selection by choosing among different values of training model parameters, that is, the interaction depth for GBM in this example. 
+
 ```{r runcv, message=FALSE, warning=FALSE}
 source("../lib/cross_validation.R")
 baseline_dat_train <- read.csv("../data/training_set/sift_train.csv", header=T)
 
+
+svm_gamma_values = 0.5
+
+
+cv.svm = T
+cv.gbm = F
+
 if(run.cv){
-  err_cv <- array(dim=c(length(model_values), 2))
-  for(k in 1:length(model_values)){
+  
+  if( cv.svm ){
+    
+  err_cv <- array(dim=c(length(svm_gamma_values), 2))
+  
+   for(k in 1:length(svm_gamma_values)){
     cat("k=", k, "\n")
-    err_cv[k,] <- cv.function( dat_train, label_train, model_values[k], K, cv.lda = T)
+     err_cv[k,] <- cv.function( dat_train, label_train, d = svm_gamma_values[k], K = K, cv.svm = T)
+   }
+    
   }
+  
+  if( cv.gbm ){
+    err_cv <- array(dim=c(length(model_values), 2))
+  
+    for(k in 1:length(model_values)){
+      cat("k=", k, "\n")
+      err_cv[k,] <- cv.function( dat_train, label_train, model_values[k], K, cv.gbm = T)
+    }
+  }
+  
   save(err_cv, file="../output/err_cv.RData")
 }
 
@@ -190,6 +215,12 @@ par_best <- list(depth=model_best)
 
 * Train the model with the entire training set using the selected model (model parameter) via cross-validation.
 ```{r final_train, warning=F}
+
+model.lda <- train( dat_train, label_train, run.lda = TRUE )
+
+model.svm <- train( dat_train, label_train, run.svm = TRUE, par = svm_gamma_values[1] )
+
+
 tm_train=NA
 tm_train <- system.time(fit_train <- train(dat_train, label_train[,2], par_best))
 save(fit_train, file="../output/fit_train.RData")
@@ -197,7 +228,12 @@ save(fit_train, file="../output/fit_train.RData")
 
 ### Step 5: Make prediction 
  
+```{r final_train, warning=F}
 
+model.lda <- test(model.lda, dat_test, test.lda = T)
+
+
+```
 
 ### Summarize Running Time
 

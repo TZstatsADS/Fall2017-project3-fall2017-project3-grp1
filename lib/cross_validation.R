@@ -14,8 +14,8 @@ cv.function <- function(X.train, y.train, d, K,
   # to debug
   #X.train <- dat_train
   #y.train <- label_train
-  #d = 3
-  #cv.lda = T
+  #d = 0.5
+  #cv.svm = T
 
   
   n <- length(y.train[,2])
@@ -44,8 +44,6 @@ cv.function <- function(X.train, y.train, d, K,
       par <- list(gamma=d)
       fit <- train(train.data, train.label, par, run.svm = TRUE)
       
-      fit <- fit$svm
-      
       pred <- test(fit, test.data, test.svm = T)
       
     }
@@ -63,8 +61,6 @@ cv.function <- function(X.train, y.train, d, K,
     if( cv.lda ){
       
       fit <- train(train.data, train.label, par = NULL, run.lda = T)
-      
-      fit <- fit$fit
       
       pred <- test( fit, test.data, test.lda = T )
       
