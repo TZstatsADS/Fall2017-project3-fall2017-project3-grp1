@@ -26,7 +26,7 @@ library("gbm")
 
 ### Step 0: specify directories.
 
-Set the working directory to the image folder. Specify the training and the testing set. For data without an independent test/validation set, you need to create your own testing data by random subsampling. In order to obain reproducible results, set.seed() whenever randomization is used. 
+Set the working directory to the image folder. Specify the training and the testing set. For data without an independent test/validation set, you need to create your own testing data by random subsampling. In order to obtain reproducible results, set.seed() whenever randomization is used. 
 
 ```{r wkdir, eval=FALSE}
 setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1") 
