@@ -72,8 +72,8 @@ source("../lib/feature_PCA.R")
 tm_feature_train <- NA
 if(run.feature.train){
   tm_feature_train <- system.time(dat_train <- feature(img_train_dir,
-                                                       n_pixel_row = 30,
-                                                       n_pixel_col = 30,
+                                                       n_pixel_row = 50,
+                                                       n_pixel_col = 50,
                                                        n_dig = 4,
                                                        n_hogs = 54,
                                                        desired_variance = 0.9,
@@ -106,12 +106,11 @@ source("../lib/test.R")
 LDA and QDA Analysis
 
 ```{r}
-train.qda <- qda(x = dat_train, grouping = label_train[,2], method = "mle", CV = T)
-error1 <- sum(train.qda$class != label_train[,2])/length(label_train[,2])
+train.qda <- qda(x = dat_train$HPCA, grouping = label_train[,2], method = "mle", CV = T)
+error1    <- sum(train.qda$class != label_train[,2])/length(label_train[,2])
 
-train.lda <- lda(x = dat_train, grouping = label_train[,2], method = "mle", CV = T)
-error2 <- sum(train.lda$class != label_train[,2])/length(label_train[,2])
-
+train.lda <- lda(x = dat_train$HPCA, grouping = label_train[,2], method = "mle", CV = T)
+error2    <- sum(train.lda$class != label_train[,2])/length(label_train[,2])
 ```
 
 
