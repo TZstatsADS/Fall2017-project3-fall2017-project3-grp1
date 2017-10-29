@@ -26,7 +26,7 @@ test <- function(fit_train, dat_test,
   ## test LDA
   if( test.lda ){
     pred <- predict(fit_train$fit, newdata = dat_test )
-    
+
     pred <- pred$class
   }
   
@@ -38,11 +38,12 @@ test <- function(fit_train, dat_test,
   ## test GBM
   if( test.gbm ){
     
-    library("gbm")
-    
-    pred <- predict(fit_train$fit, newdata=dat_test, 
-                    n.trees=fit_train$iter, type="response") 
-  }
+   prob.pred <- predict(fit_train$fit, newdata=dat_test, 
+                    n.trees=fit_train$best_n.trees, type="response")
+    pred<- apply(prob.pred, 1, which.max) 
+    pred<- pred-1
+     
+ } 
   
   if( test.rf ){
     #print(dim(dat_test))

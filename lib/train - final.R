@@ -61,36 +61,30 @@ train <- function( dat_train, label_train, params=NULL,
     return( lda )
   }
   
-  
   # Return fitted models
   #return( list( gbm = gbm, rf = randomForest, svm = svm, lda = lda ) )
   
 }
 
 ## GBM model
-gbmFit <- function( dat_train, label_train, params ){
-  
-  ### load libraries
+gbmFit <- function( dat_train, label_train, params){
   library("gbm")
-  
-  ### Train with gradient boosting model
-  if(is.null(params)){
-    depth <- 3
-  } else {
-    depth <- params$depth
+  if(!require("gbm")){
+    install.packages("gbm")
   }
-  
-  ## fit model
+  library("gbm")
   fitGbm <- gbm.fit(x = dat_train, y=label_train[,2],
-                     n.trees = 20,
+                     n.trees = 300,
+                     shrinkage = params,
                      distribution = "multinomial",
-                     interaction.depth = depth, 
+                     interaction.depth = 1, 
                      bag.fraction = 0.5,
-                     verbose = FALSE)
+                     verbose = FALSE,
+                     n.minobsinnode = 1)
   
-  best_iter <- gbm.perf(fitGbm, method="OOB", plot.it = FALSE)
+  best_ntrees <- gbm.perf(fitGbm, method="OOB", plot.it = FALSE)
   
-  return( list( fit  = fitGbm, iter = best_iter ) )
+  return( list( fit = fitGbm, best_n.trees=best_ntrees) )
   
 }
 
