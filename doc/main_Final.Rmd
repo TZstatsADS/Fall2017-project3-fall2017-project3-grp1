@@ -22,6 +22,7 @@ if(!require("gbm")){
 library("EBImage")
 library("gbm")
 library("MASS")
+library("OpenImageR")
 ```
 
 ### Step 0: specify directories.
@@ -62,9 +63,9 @@ run.lbp = FALSE
 
 # Boolean variables for running model
 run.gbm = FALSE
-run.svm = TRUE
-run.rf = FALSE
-run.lda = TRUE
+run.svm = FALSE
+run.rf = TRUE
+run.lda = FALSE
 ```
 
 Using cross-validation or independent test set evaluation, we compare the performance of different classifiers or classifiers with different specifications. In this example, we use GBM with different `depth`. In the following chunk, we list, in a vector, setups (in this case, `depth`) corresponding to models that we will compare. In your project, you maybe comparing very different classifiers. You can assign them numerical IDs and labels specific to your project. 
@@ -78,6 +79,8 @@ model_labels = paste("GBM with depth =", model_values) # for GBM
 
 svm_gamma_values <- seq(0, 2, by = 0.5)
 svm_gamma_labels = paste("SVM gamma =", svm_gamma_values) # for SVM
+
+rf_par = expand.grid(mtry = seq(5,15),ntree = seq(1000,2500,500)) #for RF
 ```
 
 ### Step 2: import training images class labels.
@@ -155,9 +158,10 @@ baseline_dat_train <- read.csv("../data/training_set/sift_train.csv", header=T)
 
 svm_gamma_values = 0.5
 
-
-cv.svm = T
+cv.svm = F
 cv.gbm = F
+cv.rf = T
+cv.lda = F
 
 if(run.cv){
   
@@ -174,10 +178,20 @@ if(run.cv){
   
   if( cv.gbm ){
     err_cv <- array(dim=c(length(model_values), 2))
-  
+    
     for(k in 1:length(model_values)){
       cat("k=", k, "\n")
       err_cv[k,] <- cv.function( dat_train, label_train, model_values[k], K, cv.gbm = T)
+    }
+  }
+  
+  if( cv.rf ){
+    err_cv <- array(dim=c(nrow(rf_par), 2))
+    model_values = rf_par
+  
+    for(k in 1:nrow(rf_par)){
+      cat("k=", k, "\n")
+      err_cv[k,] <- cv.function( dat_train, label_train, rf_par[k,], K, cv.rf = T)
     }
   }
   
@@ -190,7 +204,7 @@ Visualize cross-validation results.
 
 ```{r cv_vis, warning=F}
 if(run.cv){
-  
+
   if(cv.gbm){
     load("../output/err_cv.RData")
     #pdf("../fig/cv_results.pdf", width=7, height=5)
@@ -212,17 +226,41 @@ if(run.cv){
     lines(svm_gamma_values, err_cv[,1], col="blue")
     arrows(svm_gamma_values, err_cv[,1]-err_cv[,2], svm_gamma_values, err_cv[,1]+err_cv[,2], 
     length=0.1, angle=90, code=3)
+
+  }
+  if(cv.rf){
+    load("../output/err_cv.RData")
+    #pdf("../fig/cv_results.pdf", width=7, height=5)
+    plot(svm_gamma_values, err_cv[,1], xlab="Interaction Depth", ylab="CV Error",
+         main="Cross Validation Error", type="n", ylim=c(0, 1))
+    points(svm_gamma_values, err_cv[,1], col="blue", pch=16)
+    lines(svm_gamma_values, err_cv[,1], col="blue")
+    arrows(svm_gamma_values, err_cv[,1]-err_cv[,2], svm_gamma_values, err_cv[,1]+err_cv[,2], 
+    length=0.1, angle=90, code=3)
+  }
+
     
+
 }
 ```
 
 
 * Choose the "best"" parameter value
 ```{r best_model, warning=F}
-model_best = svm_gamma_values[1]
+
+if(ncol(model_values) > 1){
+  model_best=model_values[1,]
+  }else{
+  model_best=model_values[1]
+}
+
+
 
 if(run.cv){
   model_best <- svm_gamma_values[which.min(err_cv[,1])]
+}
+if(run.rf){
+  model_best <- model_values[which.min(err_cv[,1]),]
 }
 
 par_best <- list(gamma=model_best)
@@ -233,8 +271,9 @@ par_best <- list(gamma=model_best)
 
 model.lda <- train( dat_train, label_train, run.lda = TRUE )
 
-model.svm <- train( dat_train, label_train, run.svm = TRUE, par = model_best )
+model.svm <- train( dat_train, label_train, run.svm = TRUE, params = model_best )
 
+model.rf <- train(dat_train, label_train,model_best, run.rf = TRUE )
 
 tm_train=NA
 tm_train <- system.time(fit_train <- train(dat_train, label_train[,2], par_best))
@@ -248,6 +287,10 @@ save(fit_train, file="../output/fit_train.RData")
 model.lda <- test(model.lda, dat_test, test.lda = T)
 
 model.svm <- test(model.svm, dat_test, test.svm = T)
+
+model.rf <- test(model.rf, dat_test, test.rf = T)
+
+
 ```
 
 ### Summarize Running Time
