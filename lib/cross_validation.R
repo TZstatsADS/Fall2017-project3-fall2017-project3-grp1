@@ -15,7 +15,7 @@ cv.function <- function(X.train, y.train, d, K,
   #X.train <- dat_train
   #y.train <- label_train
   #d = 0.5
-  #cv.svm = T
+  #cv.rf = T
 
   
   n <- length(y.train[,2])
@@ -28,12 +28,13 @@ cv.function <- function(X.train, y.train, d, K,
     train.label <- y.train[s != i,]
     test.data <- X.train[s == i,]
     test.label <- y.train[s == i,]
-    
+    print('train.data:')
+    print(dim(train.data))
     ## cross validate to GBM model
     if( cv.gbm ){
       
-      par <- list(depth=d)
-      fit <- train(train.data, train.label, par, run.gbm = TRUE)
+      params <- list(depth=d)
+      fit <- train(train.data, train.label, params, run.gbm = TRUE)
       
       pred <- test(fit, test.data, test.gbm = T)
       
@@ -41,8 +42,8 @@ cv.function <- function(X.train, y.train, d, K,
     
     ## cross validate to SVM model
     if( cv.svm ){
-      par <- list(gamma=d)
-      fit <- train(train.data, train.label, par, run.svm = TRUE)
+      params <- list(gamma=d)
+      fit <- train(train.data, train.label, params, run.svm = TRUE)
       
       pred <- test(fit, test.data, test.svm = T)
       
@@ -50,17 +51,18 @@ cv.function <- function(X.train, y.train, d, K,
     
     ## cross validate to RF model
     if( cv.rf ){
-      #par <- list(gamma=d) # CHANGE THIS
-      fit <- train(train.data, train.label, par, run.rf = T)
-      fit <- fit$rf
-      
+      params <- d
+      fit <- train(train.data, train.label, params, run.rf = T)
+      print(dim(fit$importance))
+      print('world')
       pred <- test(fit, test.data, test.rf = T)
+      print('yeah')
     }
     
     ## cross validate LDA model
     if( cv.lda ){
       
-      fit <- train(train.data, train.label, par = NULL, run.lda = T)
+      fit <- train(train.data, train.label, params = NULL, run.lda = T)
       
       pred <- test( fit, test.data, test.lda = T )
       

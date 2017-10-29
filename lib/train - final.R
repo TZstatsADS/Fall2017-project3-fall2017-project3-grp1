@@ -6,7 +6,7 @@
 ### Project 3
 ### ADS Fall 2017
 
-train <- function( dat_train, label_train, par=NULL,
+train <- function( dat_train, label_train, params=NULL,
                    run.gbm = F, run.svm = F, run.rf = F,
                    run.lda = F, run.qda = F){
   
@@ -18,9 +18,11 @@ train <- function( dat_train, label_train, par=NULL,
   ### Output: training model specification
   
   ### Train with gradient boosting model
+  
+  
   gbm <- NULL
   if( run.gbm ){
-    gbm <- gbmFit( dat_train, label_train, par )
+    gbm <- gbmFit( dat_train, label_train, params )
     return( gbm )
   }
   
@@ -28,15 +30,27 @@ train <- function( dat_train, label_train, par=NULL,
   ### Train random forest model
   randomForest <- NULL
   if( run.rf ){
-    randomForest <- randomForestFit( dat_train, label_train )
-    return( randomForest )
+    #randomForest <- randomForestFit( dat_train, label_train, par )
+    #return( randomForest )
+    mtry = as.integer(params[1])
+    ntree = as.integer(params[2])
+    #dat = cbind(label_train[,2],dat_train)
+    if(!require("randomForest")){
+      install.packages("randomForest")
+    }
+    library(randomForest)
+    rf.model <- randomForest(as.factor(label_train[,2]) ~ .,
+                             data = dat_train, mtry = mtry,
+                             importance=TRUE, 
+                             ntree=ntree)
+    return(rf.model)
   }
   
   
   ### Train SVM model
   svm <- NULL
   if( run.svm ){
-    svm <- svmFit( dat_train, label_train, par )
+    svm <- svmFit( dat_train, label_train, params )
     return( svm )
   }
   
@@ -54,16 +68,16 @@ train <- function( dat_train, label_train, par=NULL,
 }
 
 ## GBM model
-gbmFit <- function( dat_train, label_train, par ){
+gbmFit <- function( dat_train, label_train, params ){
   
   ### load libraries
   library("gbm")
   
   ### Train with gradient boosting model
-  if(is.null(par)){
+  if(is.null(params)){
     depth <- 3
   } else {
-    depth <- par$depth
+    depth <- params$depth
   }
   
   ## fit model
@@ -81,12 +95,23 @@ gbmFit <- function( dat_train, label_train, par ){
 }
 
 ## Ranfom Forest model
-randomForestFit <- function( dat_train, label_train ){ # fill with necessary parameters
-  
-}
+#randomForestFit <- function( dat_train, label_train, params ){ # fill with necessary paramsameters
+#  mtry = as.integer(params[1])
+#  ntree = as.integer(par[2])
+#  dat = cbind(label_train[,2],dat_train)
+#  if(!require("randomForest")){
+#    install.packages("randomForest")
+#  }
+#  library(randomForest)
+#  rf.model <- randomForest(as.factor(label_train[,2]) ~ .,
+#                           data = dat_train, mtry = mtry,
+#                           importance=TRUE, 
+#                           ntree=ntree)
+  #return(list(fit = rf.model))
+#}
 
 ## SVM model
-svmFit <- function( dat_train, label_train, par ){ 
+svmFit <- function( dat_train, label_train, params ){ 
   
   if(!require("e1071")){
     install.packages("e1071")
@@ -94,13 +119,13 @@ svmFit <- function( dat_train, label_train, par ){
   
   library("e1071")
   
-  svm.model <- svm(dat_train, label_train[,2], type = "C", kernel = "radial", gamma = par)
+  svm.model <- svm(dat_train, label_train[,2], type = "C", kernel = "radial", gamma = params)
   
   return(list(fit = svm.model))
 }
 
 ## CNN model
-cnnFit <- function( dat_train, label_train ){ # fill with necessary parameters
+cnnFit <- function( dat_train, label_train ){ # fill with necessary paramsameters
   
 }
 
