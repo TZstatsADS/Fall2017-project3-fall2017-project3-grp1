@@ -30,12 +30,12 @@ cv.function <- function(X.train, y.train, d, K,
     test.label <- y.train[s == i,]
     print('train.data:')
     print(dim(train.data))
+    
     ## cross validate to GBM model
     if( cv.gbm ){
       
-      params <- list(depth=d)
+      params<-list(shrinkage=d)
       fit <- train(train.data, train.label, params, run.gbm = TRUE)
-      
       pred <- test(fit, test.data, test.gbm = T)
       
     }
@@ -71,6 +71,7 @@ cv.function <- function(X.train, y.train, d, K,
     cv.error[i] <- mean(pred != y.train[s == i,2])  
     
   }			
+  
   return(c(mean(cv.error),sd(cv.error)))
   
 }
