@@ -261,12 +261,6 @@ if(run.cv){
 }
 if(run.rf){
   model_best <- model_values[which.min(err_cv[,1]),]
-
-model_best = svm_gamma_values[1]
-
-if(run.cv){
-  model_best <- svm_gamma_values[which.min(err_cv[,1])]
-
 }
 
 par_best <- list(gamma=model_best)
@@ -277,11 +271,7 @@ par_best <- list(gamma=model_best)
 
 model.lda <- train( dat_train, label_train, run.lda = TRUE )
 
-
 model.svm <- train( dat_train, label_train, run.svm = TRUE, params = model_best )
-
-model.svm <- train( dat_train, label_train, run.svm = TRUE, par = model_best )
-
 
 model.rf <- train(dat_train, label_train,model_best, run.rf = TRUE )
 
@@ -297,7 +287,6 @@ save(fit_train, file="../output/fit_train.RData")
 model.lda <- test(model.lda, dat_test, test.lda = T)
 
 model.svm <- test(model.svm, dat_test, test.svm = T)
-
 
 model.rf <- test(model.rf, dat_test, test.rf = T)
 
