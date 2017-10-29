@@ -209,6 +209,10 @@ Visualize cross-validation results.
 ```{r cv_vis, warning=F}
 if(run.cv){
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 =======
   
 >>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
@@ -234,6 +238,7 @@ if(run.cv){
     arrows(svm_gamma_values, err_cv[,1]-err_cv[,2], svm_gamma_values, err_cv[,1]+err_cv[,2], 
     length=0.1, angle=90, code=3)
 <<<<<<< HEAD
+<<<<<<< HEAD
   }
   if(cv.rf){
     load("../output/err_cv.RData")
@@ -248,12 +253,16 @@ if(run.cv){
 =======
     
 >>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
+=======
+    
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 }
 ```
 
 
 * Choose the "best"" parameter value
 ```{r best_model, warning=F}
+<<<<<<< HEAD
 <<<<<<< HEAD
 if(ncol(model_values) > 1){
   model_best=model_values[1,]
@@ -269,10 +278,15 @@ if(run.cv){
 if(run.rf){
   model_best <- model_values[which.min(err_cv[,1]),]
 =======
+=======
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 model_best = svm_gamma_values[1]
 
 if(run.cv){
   model_best <- svm_gamma_values[which.min(err_cv[,1])]
+<<<<<<< HEAD
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
+=======
 >>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 }
 
@@ -285,7 +299,11 @@ par_best <- list(gamma=model_best)
 model.lda <- train( dat_train, label_train, run.lda = TRUE )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 model.svm <- train( dat_train, label_train, run.svm = TRUE, params = model_best )
+=======
+model.svm <- train( dat_train, label_train, run.svm = TRUE, par = model_best )
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 =======
 model.svm <- train( dat_train, label_train, run.svm = TRUE, par = model_best )
 >>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
@@ -305,10 +323,13 @@ model.lda <- test(model.lda, dat_test, test.lda = T)
 
 model.svm <- test(model.svm, dat_test, test.svm = T)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 model.rf <- test(model.rf, dat_test, test.rf = T)
 
 
+=======
+>>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 =======
 >>>>>>> 908a8a8fbf0491641aba8ac531c94d0c87d1d507
 ```
