@@ -8,7 +8,7 @@
 
 feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20, 
                     desired_variance = 0.9, n_hogs = 54, run.pca = F, 
-                    run.hogs = T, run.cnn = F, run.lbp = F, export = T){
+                    run.hogs = F, run.cnn = F, run.lbp = F, export = T){
   
   ### Construct process features for training/testing images
   ### Sample simple feature: Extract row average raw pixel values as features

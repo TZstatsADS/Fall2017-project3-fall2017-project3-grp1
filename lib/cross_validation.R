@@ -53,10 +53,10 @@ cv.function <- function(X.train, y.train, d, K,
     if( cv.rf ){
       params <- d
       fit <- train(train.data, train.label, params, run.rf = T)
-      print(dim(fit$importance))
-      print('world')
+      #print(dim(fit$importance))
+      #print('world')
       pred <- test(fit, test.data, test.rf = T)
-      print('yeah')
+      #print('yeah')
     }
     
     ## cross validate LDA model
