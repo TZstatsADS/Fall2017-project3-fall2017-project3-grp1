@@ -29,8 +29,10 @@ library("OpenImageR")
 
 # here replace it with your own path or manually set it in RStudio to where this rmd file is located.
 ```{r wkdir, eval=FALSE}
-#setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1/doc") 
+#setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1/doc")
+#setwd("~/Desktop/Fall2017-project3-fall2017-project3-grp1-master/doc")
 ```
+
 
 ```{r, warning=F}
 experiment_dir <- "../data/training_set/" # This will be modified for different data sets.
@@ -74,8 +76,8 @@ Using cross-validation or independent test set evaluation, we compare the perfor
 ## Add stuff here to call different models
 
 ```{r model_setup, warning=F}
-model_values <- seq(3, 11, 2) # for GBM
-model_labels = paste("GBM with depth =", model_values) # for GBM
+model_values<-seq(0.01,0.25,0.05) #for GBM
+#model_labels = paste("GBM with shrinkage value =", model_values) # for GBM
 
 svm_gamma_values <- seq(0, 0.5, by = 0.1)
 svm_gamma_labels = paste("SVM gamma =", svm_gamma_values) # for SVM
@@ -154,13 +156,24 @@ load("../output/feature_test.RData")
 ```{r runcv, message=FALSE, warning=FALSE}
 source("../lib/cross_validation.R")
 baseline_dat_train <- read.csv("../data/training_set/sift_train.csv", header=T)
+baseline_dat_train<-baseline_dat_train[,-1]
 
 cv.svm = T
 cv.gbm = F
 cv.rf = T
-cv.lda = F
+cv.lda = T
 
-if(run.cv){
+if(run.cv) {
+   
+  if( cv.gbm ){
+    err_cv <- array(dim=c(length(model_values), 2))
+    
+    for(k in 1:length(model_values)){
+      cat("k=", k, "\n")
+      err_cv[k,] <- cv.function( as.data.frame(dat_train), label_train, model_values[k], K, cv.gbm = T)
+      #err_cv[k,]<-cv.function(baseline_dat_train,label_train,model_values[k],K,cv.gbm = T)
+     }
+  }
   
   if( cv.svm ){
     
@@ -173,14 +186,7 @@ if(run.cv){
     
   }
   
-  if( cv.gbm ){
-    err_cv <- array(dim=c(length(model_values), 2))
-    
-    for(k in 1:length(model_values)){
-      cat("k=", k, "\n")
-      err_cv[k,] <- cv.function( dat_train, label_train, model_values[k], K, cv.gbm = T)
-    }
-  }
+ 
   
   if( cv.rf ){
     err_cv <- array(dim=c(nrow(rf_par), 2))
@@ -251,13 +257,14 @@ if(ncol(model_values) > 1){
   model_best=model_values[1]
 }
 
-
-
+if(run.gbm){
+  model_best<- model_values[which.min(err_cv[,1])]
+}
 if(run.cv){
   model_best <- svm_gamma_values[which.min(err_cv[,1])]
 }
 if(run.rf){
-  model_best <- model_values[which.min(err_cv[,1]),]
+  model_best <- rf_par[which.min(err_cv[,1]),]
 }
 
 par_best <- list(gamma=model_best)
@@ -269,6 +276,9 @@ par_best <- list(gamma=model_best)
 tm_train_lda <- system.time(model.lda <- train( dat_train, label_train, run.lda = TRUE ))
 save(model.lda, file="../output/model_lda.RData")
 
+tm_train_gbm <- system.time(model.gbm <- train( dat_train, label_train, run.gbm = TRUE ))
+save(model.gbm, file="../output/model_gbm.RData")
+
 tm_train_svm <- system.time(model.svm <- train( dat_train, label_train, run.svm = TRUE, params = model_best ))
 save(model.svm, file="../output/model_svm.RData")
 
@@ -278,7 +288,7 @@ save(model.rf, file="../output/model_rf.RData")
 
 ### Step 5: Make prediction and Summarize running time
  
-```{r final_train, warning=F}
+```{r final_train&running time, warning=F}
 cat("Total Time for constructing training features=", tm_feature_train[1], "s \n")
 
 cat("Total Time for constructing testing features=", tm_feature_test[1], "s \n")
@@ -288,6 +298,12 @@ lda.error <- sum((pred.lda != label_train[1:10,2]))/(length(label_train[1:10,2])
 cat("Test error =", lda.error * 100, "% \n")
 cat("Time for training model=", tm_train_lda[1], "s \n")
 cat("Time for testing model=", tm_test_lda[1], "s \n")
+
+tm_test_gbm <- system.time(pred.gbm <- test(model.gbm, dat_test, test.gbm = T))
+gbm.error <- sum((pred.gbm != label_train[1:10,2]))/(length(label_train[1:10,2]))
+cat("Test error =", gbm.error * 100, "% \n")
+cat("Time for training model=", tm_train_gbm[1], "s \n")
+cat("Time for testing model=", tm_test_gbm[1], "s \n")
 
 tm_test_svm <- system.time(pred.svm <- test(model.svm, dat_test, test.svm = T))
 svm.error <- sum((pred.svm != label_train[1:10,2]))/(length(label_train[1:10,2]))
@@ -302,4 +318,5 @@ cat("Time for training model=", tm_train_rf[1], "s \n")
 cat("Time for testing model=", tm_test_rf[1], "s \n")
 
 ```
+
 
