@@ -44,14 +44,15 @@ library("randomForest")
 ```
 
 
-# Set directories of train and test datasets.
+
+# Set directories where train and test datasets are located.
 ```{r, warning=F}
-experiment_dir <- "../data/training_set/" # This will be modified for different data sets.
+experiment_dir <- "../data/training_set/"
 img_train_dir <- paste(experiment_dir, "train/", sep="")
 img_test_dir <- paste(experiment_dir, "test/", sep="")
 ```
 
-### Step 1: set up controls for evaluation experiments.
+### Step 1: Set up controls for evaluation experiments.
 
 In this chunk, ,we have a set of controls for the evaluation experiments. 
 
@@ -69,7 +70,9 @@ run.test = TRUE # run evaluation on an independent test set
 run.feature.test = TRUE # process features for test set
 ```
 
-# Boolean variables indicating which feature extraction method to perform
+
+### Boolean variables for Feature Extraction procedures
+
 ```{r}
 run.pca = FALSE
 run.hogs = TRUE
@@ -77,7 +80,9 @@ run.cnn = FALSE
 run.lbp = FALSE
 ```
 
-# Boolean variables indicating which model to run
+
+### Boolean variables indicating which model to run
+
 ```{r}
 run.gbm = FALSE
 run.svm = FALSE
