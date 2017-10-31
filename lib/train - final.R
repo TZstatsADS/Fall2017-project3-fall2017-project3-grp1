@@ -14,7 +14,7 @@ train <- function( dat_train, label_train, params=NULL,
   ###  -  processed features from images 
   ###  -  class labels for training images
   ###  -  boolean variables indicating which models to run
-  ###  -  par parameter for gbm
+  ###  -  'params' model parameters
   ### Output: training model specification
   
   ### Train with gradient boosting model
@@ -60,10 +60,7 @@ train <- function( dat_train, label_train, params=NULL,
     lda <- ldaFit( dat_train, label_train )
     return( lda )
   }
-  
-  # Return fitted models
-  #return( list( gbm = gbm, rf = randomForest, svm = svm, lda = lda ) )
-  
+    
 }
 
 ## GBM model
@@ -88,21 +85,6 @@ gbmFit <- function( dat_train, label_train, params){
   
 }
 
-## Ranfom Forest model
-#randomForestFit <- function( dat_train, label_train, params ){ # fill with necessary paramsameters
-#  mtry = as.integer(params[1])
-#  ntree = as.integer(par[2])
-#  dat = cbind(label_train[,2],dat_train)
-#  if(!require("randomForest")){
-#    install.packages("randomForest")
-#  }
-#  library(randomForest)
-#  rf.model <- randomForest(as.factor(label_train[,2]) ~ .,
-#                           data = dat_train, mtry = mtry,
-#                           importance=TRUE, 
-#                           ntree=ntree)
-  #return(list(fit = rf.model))
-#}
 
 ## SVM model
 svmFit <- function( dat_train, label_train, params ){ 
