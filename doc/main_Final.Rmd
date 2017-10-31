@@ -24,6 +24,8 @@ library("gbm")
 library("MASS")
 library("OpenImageR")
 library("jpeg")
+library("ggplot2")
+library("reshape2")
 ```
 
 ### Step 0: specify directories.
@@ -231,6 +233,16 @@ if(run.cv){
     arrows(svm_gamma_values, err_cv[,1]-err_cv[,2], svm_gamma_values, err_cv[,1]+err_cv[,2], 
     length=0.1, angle=90, code=3)
 
+  }
+  if(cv.rf){
+    load('../output/err_cv.RData')
+    models <- cbind(model_values, err_cv)
+    colnames(models) <- c('mtry','ntree','err','sd')
+    models <- models[,-4]
+    #models <- melt(models, id.vars='ntree', value.name="err", variable.name="mtry")
+    ggplot(data=models, aes(x=mtry, y=err, group = as.factor(ntree), colour = as.factor(ntree))) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white")
   }
 
 }
