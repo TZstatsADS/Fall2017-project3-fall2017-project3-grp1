@@ -13,9 +13,16 @@ if(!require("EBImage")){
   biocLite("EBImage")
 }
 
-## OBS - add more packages here
-if(!require("gbm")){
-  install.packages("gbm")
+packages.used=c("gbm", "MASS", "OpenImageR", "jpeg", "ggplot2", "reshape2", "randomForest")
+
+# check packages that need to be installed.
+packages.needed=setdiff(packages.used, 
+                        intersect(installed.packages()[,1], 
+                                  packages.used))
+# install additional packages
+if(length(packages.needed)>0){
+  install.packages(packages.needed, dependencies = TRUE,
+                   repos='http://cran.us.r-project.org')
 }
 
 ## OBS - add more packages here
@@ -24,6 +31,9 @@ library("gbm")
 library("MASS")
 library("OpenImageR")
 library("jpeg")
+library("ggplot2")
+library("reshape2")
+library("randomForest")
 ```
 
 ### Step 0: specify directories.
@@ -66,8 +76,8 @@ run.lbp = FALSE
 
 # Boolean variables for running model
 run.gbm = FALSE
-run.svm = TRUE
-run.rf = FALSE
+run.svm = FALSE
+run.rf = TRUE
 run.lda = FALSE
 ```
 
@@ -83,7 +93,7 @@ model_values<-seq(0.01,0.25,0.05) #for GBM
 svm_gamma_values <- seq(0, 0.5, by = 0.1)
 svm_gamma_labels = paste("SVM gamma =", svm_gamma_values) # for SVM
 
-rf_par = expand.grid(mtry = seq(5,15),ntree = seq(1000,2500,500)) #for RF
+rf_par = expand.grid(mtry = c(15, 30),ntree = c(500, 2000)) #for RF
 ```
 
 ### Step 2: import training images class labels.
@@ -100,8 +110,8 @@ source("../lib/feature - final.R")
 tm_feature_train <- NA
 if(run.feature.train){
   tm_feature_train <- system.time(dat_train <- feature(img_train_dir,
-                                                       n_pixel_row = 20,
-                                                       n_pixel_col = 20,
+                                                       n_pixel_row = 300,
+                                                       n_pixel_col = 300,
                                                        n_dig = 4,
                                                        n_hogs = 54,
                                                        desired_variance = 0.9,
@@ -115,8 +125,8 @@ if(run.feature.train){
 tm_feature_test <- NA
 if(run.feature.test){
   tm_feature_test <- system.time(dat_test <- feature(img_test_dir,
-                                                       n_pixel_row = 20,
-                                                       n_pixel_col = 20,
+                                                       n_pixel_row = 300,
+                                                       n_pixel_col = 300,
                                                        n_dig = 4,
                                                        n_hogs = 54,
                                                        desired_variance = 0.9,
@@ -159,9 +169,11 @@ source("../lib/cross_validation.R")
 baseline_dat_train <- read.csv("../data/training_set/sift_train.csv", header=T)
 baseline_dat_train<-baseline_dat_train[,-1]
 
-cv.svm = T
+#dat_train <- baseline_dat_train
+
+cv.svm = F
 cv.gbm = F
-cv.rf = F
+cv.rf = T
 cv.lda = F
 
 if(run.cv) {
@@ -232,6 +244,16 @@ if(run.cv){
     length=0.1, angle=90, code=3)
 
   }
+  if(cv.rf){
+    load('../output/err_cv.RData')
+    models <- cbind(model_values, err_cv)
+    colnames(models) <- c('mtry','ntree','err','sd')
+    models <- models[,-4]
+    #models <- melt(models, id.vars='ntree', value.name="err", variable.name="mtry")
+    ggplot(data=models, aes(x=mtry, y=err, group = as.factor(ntree), colour = as.factor(ntree))) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white")
+  }
 
 }
 ```
@@ -289,13 +311,16 @@ if( run.rf ){
 ### Step 5: Make prediction and Summarize running time
  
 ```{r final_train&running time, warning=F}
+#Import Test labels
+label_test <- read.csv("../data/training_set/label_test.csv", header=T)
+
 cat("Total Time for constructing training features=", tm_feature_train[1], "s \n")
 
 cat("Total Time for constructing testing features=", tm_feature_test[1], "s \n")
 
 if( run.lda ){
   tm_test_lda <- system.time(pred.lda <- test(model.lda, dat_test, test.lda = T))
-  lda.error <- sum((pred.lda != label_train[1:10,2]))/(length(label_train[1:10,2]))
+  lda.error <- sum((pred.lda != label_test[,2]))/(length(label_test[,2]))
   cat("Test error =", lda.error * 100, "% \n")
   cat("Time for training model=", tm_train_lda[1], "s \n")
   cat("Time for testing model=", tm_test_lda[1], "s \n")
@@ -303,7 +328,7 @@ if( run.lda ){
 
 if( run.gbm ){
   tm_test_gbm <- system.time(pred.gbm <- test(model.gbm, dat_test, test.gbm = T))
-  gbm.error <- sum((pred.gbm != label_train[1:10,2]))/(length(label_train[1:10,2]))
+  gbm.error <- sum((pred.gbm != label_test[,2]))/(length(label_test[,2]))
   cat("Test error =", gbm.error * 100, "% \n")
   cat("Time for training model=", tm_train_gbm[1], "s \n")
   cat("Time for testing model=", tm_test_gbm[1], "s \n")
@@ -311,7 +336,7 @@ if( run.gbm ){
 
 if( run.svm ){
   tm_test_svm <- system.time(pred.svm <- test(model.svm, dat_test, test.svm = T))
-  svm.error <- sum((pred.svm != label_train[1:10,2]))/(length(label_train[1:10,2]))
+  svm.error <- sum((pred.svm != label_test[,2]))/(length(label_test[,2]))
   cat("Test error =", svm.error * 100, "% \n")
   cat("Time for training model=", tm_train_svm[1], "s \n")
   cat("Time for testing model=", tm_test_svm[1], "s \n")
@@ -319,7 +344,7 @@ if( run.svm ){
 
 if( run.rf ){
   tm_test_rf <- system.time(pred.rf <- test(model.rf, dat_test, test.rf = T))
-  rf.error <- sum((pred.rf != label_train[1:10,2]))/(length(label_train[1:10,2]))
+  rf.error <- sum((pred.rf != label_test[,2]))/(length(label_test[,2]))
   cat("Test error =", rf.error * 100, "% \n")
   cat("Time for training model=", tm_train_rf[1], "s \n")
   cat("Time for testing model=", tm_test_rf[1], "s \n")

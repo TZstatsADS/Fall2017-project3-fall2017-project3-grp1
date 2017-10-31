@@ -134,7 +134,7 @@ qdaFit <- function( dat_train, label_train ){
 #LDA fit
 ldaFit <- function( dat_train, label_train ){
   
-  fit <- lda(x = dat_train, grouping = label_train[,2] )
+  fit <- lda(x = dat_train, grouping = label_train[,2], CV = T )
   return( list( fit  = fit ) )
   
 }
