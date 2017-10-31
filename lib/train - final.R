@@ -101,7 +101,12 @@ svmFit <- function( dat_train, label_train, params ){
 }
 
 ## CNN model
-cnnFit <- function( dat_train, label_train ){ # fill with necessary paramsameters
+cnnFit <- function( ){ # fill with necessary paramsameters
+  #para need: direction of files, thus no paras here
+  experiment_dir <- "../data/training_set/"
+  img_train_dir <- paste(experiment_dir, "train/", sep="")
+  label_dir <- "../data/training_set/label_train.csv"
+  
   
 }
 

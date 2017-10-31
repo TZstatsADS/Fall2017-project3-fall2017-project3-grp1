@@ -20,7 +20,7 @@ feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20,
   library("EBImage")
   library("jpeg")
   library("OpenImageR")
-  
+
   n_files <- length(list.files(img_dir))
   
   ### determine img dimensions
@@ -62,7 +62,7 @@ feature <- function(img_dir, n_dig = 0, n_pixel_row = 20, n_pixel_col = 20,
   ## run CNN feature extraction
   cnnFeatures <- NULL
   if( run.cnn ){
-    cnnFeatures <- cnnFeatureExtraction()
+    cnnFeatures <- cnnFeatureExtraction(img_dir)
     save(cnnFeatures, file=paste0("../output/cnnFeatures.RData"))
     return( cnnFeatures )
   }
@@ -98,8 +98,14 @@ pcaFeatureExtraction <- function (dat, desired_variance = 0.9){
 
 
 ## perform CNN - insert necessary parameters 
-cnnFeatureExtraction <- function(){ 
-  
+cnnFeatureExtraction <- function(img_dir){ 
+  #img_dir = "../data/training_set/train/"
+  cmd <- paste("~/anaconda/bin/python ../lib/CNN_test.py", img_dir)
+  system(cmd)
+
+  dat <- read.csv("../output/feature_CNN_test.csv")
+  dat <- dat[,-1]
+  return(dat)
 }
 
 
