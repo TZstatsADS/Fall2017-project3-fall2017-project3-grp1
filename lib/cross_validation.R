@@ -30,12 +30,12 @@ cv.function <- function(X.train, y.train, d, K,
     test.label <- y.train[s == i,]
     print('train.data:')
     print(dim(train.data))
+    
     ## cross validate to GBM model
     if( cv.gbm ){
       
-      params <- list(depth=d)
+      params<-list(shrinkage=d)
       fit <- train(train.data, train.label, params, run.gbm = TRUE)
-      
       pred <- test(fit, test.data, test.gbm = T)
       
     }
@@ -53,10 +53,10 @@ cv.function <- function(X.train, y.train, d, K,
     if( cv.rf ){
       params <- d
       fit <- train(train.data, train.label, params, run.rf = T)
-      print(dim(fit$importance))
-      print('world')
+      #print(dim(fit$importance))
+      #print('world')
       pred <- test(fit, test.data, test.rf = T)
-      print('yeah')
+      #print('yeah')
     }
     
     ## cross validate LDA model
@@ -71,6 +71,7 @@ cv.function <- function(X.train, y.train, d, K,
     cv.error[i] <- mean(pred != y.train[s == i,2])  
     
   }			
+  
   return(c(mean(cv.error),sd(cv.error)))
   
 }
