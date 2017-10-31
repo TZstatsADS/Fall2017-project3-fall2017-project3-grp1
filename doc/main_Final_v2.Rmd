@@ -75,16 +75,16 @@ model.train = FALSE
 ### Boolean variables indicating which feature extraction method to perform
 ```{r}
 run.pca = FALSE
-run.hogs = FALSE
+run.hogs = TRUE
 run.cnn = FALSE
-run.sift = TRUE
+run.sift = FALSE
 ```
 
 ### Boolean variables indicating which model to run
 ```{r}
-run.gbm = TRUE
+run.gbm = FALSE
 run.svm = FALSE
-run.rf = FALSE
+run.rf = TRUE
 run.lda = FALSE
 ```
 
@@ -305,7 +305,7 @@ if( !run.cv ){
   }
   
   if( run.rf ){
-    model_best <- c(20,2000)
+    model_best <- list(mtry = 20, ntree = 2000)
   }
   
   if( run.svm ){
@@ -323,7 +323,7 @@ if( model.train ){
   
   # Train GBM
   if( run.gbm ){
-    tm_train_gbm <- system.time(model.gbm <- train( as.data.frame(dat_train), label_train, run.gbm = TRUE ))
+    tm_train_gbm <- system.time(model.gbm <- train( as.data.frame(dat_train), label_train, params = model_best, run.gbm = TRUE ))
     save(model.gbm, file="../output/model_gbm.RData")
   }
   
