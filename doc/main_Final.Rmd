@@ -25,7 +25,7 @@ if(length(packages.needed)>0){
                    repos='http://cran.us.r-project.org')
 }
 
-## OBS - add more packages here
+## Loading packages
 library("EBImage")
 library("gbm")
 library("MASS")
@@ -38,13 +38,13 @@ library("randomForest")
 
 ### Step 0: specify directories.
 
-# here replace it with your own path or manually set it in RStudio to where this rmd file is located.
+# Set working directory as where this .rmd file is located.
 ```{r wkdir, eval=FALSE}
-#setwd("/Users/pedrohmariani/Documents/Columbia/Academic/Fall 2017/AppliedDataScience/Projects/TZstatsFolder/Fall2017-project3-fall2017-project3-grp1/doc")
 #setwd("~/Desktop/Fall2017-project3-fall2017-project3-grp1-master/doc")
 ```
 
 
+# Set directories of train and test datasets.
 ```{r, warning=F}
 experiment_dir <- "../data/training_set/" # This will be modified for different data sets.
 img_train_dir <- paste(experiment_dir, "train/", sep="")
@@ -67,24 +67,25 @@ K <- 5  # number of CV folds
 run.feature.train = TRUE # process features for training set
 run.test = TRUE # run evaluation on an independent test set
 run.feature.test = TRUE # process features for test set
+```
 
-# Boolean variables for Feature Extraction
-run.pca = FALSE #Performs PCA dimensionality reduction on images
+# Boolean variables indicating which feature extraction method to perform
+```{r}
+run.pca = FALSE
 run.hogs = TRUE
 run.cnn = FALSE
 run.lbp = FALSE
+```
 
-# Boolean variables for running model
+# Boolean variables indicating which model to run
+```{r}
 run.gbm = FALSE
 run.svm = FALSE
 run.rf = TRUE
 run.lda = FALSE
 ```
 
-Using cross-validation or independent test set evaluation, we compare the performance of different classifiers or classifiers with different specifications. In this example, we use GBM with different `depth`. In the following chunk, we list, in a vector, setups (in this case, `depth`) corresponding to models that we will compare. In your project, you maybe comparing very different classifiers. You can assign them numerical IDs and labels specific to your project. 
-
-#OBS
-## Add stuff here to call different models
+Using cross-validation or independent test set evaluation, we compare the performance of different classifiers or classifiers with different specifications. In the baseline model, we use GBM with different `shrinkage` parameter values. In the following chunk, we list, in a vector, setups (in this case, `depth`) corresponding to models that we will compare. In your project, you maybe comparing very different classifiers. You can assign them numerical IDs and labels specific to your project. 
 
 ```{r model_setup, warning=F}
 model_values<-seq(0.01,0.25,0.05) #for GBM
