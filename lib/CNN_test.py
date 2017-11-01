@@ -35,9 +35,9 @@ images = np.array(images)
 print "all photos read DONE"
 
 #====== Testing on given dataset ======
-saver = tf.train.import_meta_graph('../lib/where_are_my_puppies.meta')
+saver = tf.train.import_meta_graph('../lib/where_are_my_puppies_test00001.meta')
 sess = tf.Session()
-saver.restore(sess, "../lib/./where_are_my_puppies")
+saver.restore(sess, "../lib/./where_are_my_puppies_test00001")
 graph = tf.get_default_graph()
 
 y_pred = graph.get_tensor_by_name("y_pred:0")

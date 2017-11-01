@@ -371,7 +371,7 @@ def train(num_iteration):
                 record_best_acc = acc
                 record_best_val_acc = val_acc
 
-                saver.save(session, 'where_are_my_puppies')
+                saver.save(session, 'where_are_my_puppies_test00001')
 
 
 
