@@ -46,6 +46,12 @@ train <- function( dat_train, label_train, params=NULL,
     return(rf.model)
   }
   
+  ### train CNN model
+  cnn <- NULL
+  if( run.cnn ){
+    cnn <- cnnFit( params )
+    return( cnn )
+  }
   
   ### Train SVM model
   svm <- NULL
@@ -101,13 +107,17 @@ svmFit <- function( dat_train, label_train, params ){
 }
 
 ## CNN model
-cnnFit <- function( ){ # fill with necessary paramsameters
+cnnFit <- function( dat_train, label_train, params ){ # fill with necessary paramsameters
   #para need: direction of files, thus no paras here
-  experiment_dir <- "../data/training_set/"
-  img_train_dir <- paste(experiment_dir, "train/", sep="")
-  label_dir <- "../data/training_set/label_train.csv"
+  #experiment_dir <- "../data/training_set/"
+  #img_train_dir <- paste(experiment_dir, "train/", sep="")
+  #label_dir <- "../data/training_set/label_train.csv"
+  #params <- c(img_train_dir, label_dir)
   
-  
+  cmd <- paste("~/anaconda/bin/python ../lib/CNN.py", params[1])
+  cmd <- paste(cmd, params[2])
+  system(cmd)
+  return()
 }
 
 ## QDA fit
