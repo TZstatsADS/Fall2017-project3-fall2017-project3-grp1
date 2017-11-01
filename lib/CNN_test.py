@@ -22,6 +22,7 @@ print test_path
 #====== loading data ======
 files = [test_path + f for f in os.listdir(test_path) if f.endswith('.jpg')]
 images = []
+
 for fl in files:
     image = cv2.imread(fl)
     image = cv2.resize(image, (image_size, image_size), 0, 0, cv2.INTER_LINEAR)
@@ -43,17 +44,17 @@ y_pred = graph.get_tensor_by_name("y_pred:0")
 y_pred_cls = tf.argmax(y_pred, axis=1)
 x = graph.get_tensor_by_name("x:0")
 y_true = graph.get_tensor_by_name("y_true:0")
-layer_fc2 = graph.get_tensor_by_name("layer_fc1:0")
+#layer_fc2 = graph.get_tensor_by_name("layer_fc1:0")
 
 results = []
 for image in images:
     x_batch = image.reshape(1, image_size, image_size, num_channels)
     y_test_images = np.zeros((1, num_classes))
     feed_dict_testing = {x: x_batch, y_true: y_test_images}
-    result = sess.run(layer_fc2, feed_dict=feed_dict_testing)
+    result = sess.run(y_pred_cls, feed_dict=feed_dict_testing)
     results.append(result)
 
 
 #====== output =====
-df = pd.DataFrame(np.resize(np.asarray(results), (len(files),128)))
-df.to_csv("../output/feature_CNN_test.csv")
+df = pd.DataFrame(np.resize(np.asarray(results), len(files)))
+df.to_csv("../output/feature_CNN_test_class.csv")

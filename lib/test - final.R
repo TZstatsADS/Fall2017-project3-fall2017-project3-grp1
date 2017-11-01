@@ -6,8 +6,8 @@
 ### Project 3
 ### ADS Fall 2017
 
-test <- function(fit_train, dat_test, 
-                 test.lda = F, test.gbm = F, test.svm = F, test.rf = F){
+test <- function(fit_train, dat_test, params=NULL,
+                 test.lda = F, test.gbm = F, test.svm = F, test.cnn = F, test.rf = F){
   
   ### Fit the classfication model with testing data
   
@@ -44,6 +44,19 @@ test <- function(fit_train, dat_test,
     pred<- pred-1
      
  } 
+  
+  if( test.cnn ){
+    #experiment_dir <- "../data/training_set/"
+    #img_test_dir <- paste(experiment_dir, "test/", sep="")
+    # params <- img_test_dir
+    
+    cmd <- paste("~/anaconda/bin/python ../lib/CNN_test.py", params)
+    system(cmd)
+    
+    img_test_dir <- "../output/feature_CNN_test_class.csv"
+    pred <- read.csv(img_test_dir)
+    pred <- pred[,2]
+  }
   
   if( test.rf ){
     #print(dim(dat_test))

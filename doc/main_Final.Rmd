@@ -105,7 +105,8 @@ rf_par = expand.grid(mtry = c(15, 30),ntree = c(500, 2000)) #for RF
 ### Step 2: import training images class labels.
 
 ```{r train_label, warning=F}
-label_train <- read.csv("../data/training_set/label_train.csv", header=T)
+label_dir <- "../data/training_set/label_train.csv"
+label_train <- read.csv(label_dir, header=T)
 ```
 
 ### Step 3: construct visual feature
@@ -303,6 +304,11 @@ if( run.gbm ){
   save(model.gbm, file="../output/model_gbm.RData")
 }
 
+if( run.cnn ){
+  tm_train_cnn <- system.time(model.cnn <- train( params = c(img_train_dir, label_dir) ))
+  save(model.cnn, file="../output/model_cnn.RData")
+}
+
 if( run.svm ){
   tm_train_svm <- system.time(model.svm <- train( dat_train, label_train, run.svm = TRUE, params = model_best ))
   save(model.svm, file="../output/model_svm.RData")
@@ -346,6 +352,14 @@ if( run.svm ){
   cat("Test error =", svm.error * 100, "% \n")
   cat("Time for training model=", tm_train_svm[1], "s \n")
   cat("Time for testing model=", tm_test_svm[1], "s \n")
+}
+
+if( run.cnn ){
+  tm_test_cnn <- system.time(pred.rf <- test(model.cnn, dat_test, params = img_test_dir, test.cnn = T))
+  cnn.error <- sum((pred.cnn != label_test[,2]))/(length(label_test[,2]))
+  cat("Test error =", cnn.error * 100, "% \n")
+  cat("Time for training model=", tm_train_cnn[1], "s \n")
+  cat("Time for testing model=", tm_test_cnn[1], "s \n")
 }
 
 if( run.rf ){
