@@ -49,7 +49,7 @@ train <- function( dat_train, label_train, params=NULL,
   ### train CNN model
   cnn <- NULL
   if( run.cnn ){
-    cnn <- cnnFit( params )
+    cnn <- cnnFit( params = params)
     return( cnn )
   }
   

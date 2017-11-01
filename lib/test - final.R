@@ -51,6 +51,7 @@ test <- function(fit_train, dat_test, params=NULL,
     # params <- img_test_dir
     
     cmd <- paste("~/anaconda/bin/python ../lib/CNN_test.py", params)
+    print(cmd)
     system(cmd)
     
     img_test_dir <- "../output/feature_CNN_test_class.csv"
