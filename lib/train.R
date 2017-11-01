@@ -49,7 +49,7 @@ train <- function( dat_train, label_train, params=NULL,
   ### train CNN model
   cnn <- NULL
   if( run.cnn ){
-    cnn <- cnnFit( params )
+    #cnn <- cnnFit( params = params)
     return( cnn )
   }
   
@@ -114,7 +114,7 @@ cnnFit <- function( dat_train, label_train, params ){ # fill with necessary para
   #label_dir <- "../data/training_set/label_train.csv"
   #params <- c(img_train_dir, label_dir)
   
-  cmd <- paste("~/anaconda/bin/python ../lib/CNN.py", params[1])
+  cmd <- paste("~/anaconda2/bin/python ../lib/CNN.py", params[1])
   cmd <- paste(cmd, params[2])
   system(cmd)
   return()
