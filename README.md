@@ -18,6 +18,7 @@ Term: Fall 2017
 ![image](figs/Table.jpg)
 	
 **Contribution statement**: 
+
 Christina Huang - CNN model and HOG/CNN feature extraction
 
 Henrique Saboya - PCA with HOG and LDA
