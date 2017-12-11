@@ -23,7 +23,7 @@ Christina Huang - CNN model and HOG/CNN feature extraction
 
 Henrique Saboya - Tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction, tried other different image segmentation as feature extractions, such as color matrix norms.
 
-Jing Zhao - LBP feature extraction and random forest model
+Jing Zhao - LBP feature extraction and random forest model, tried other classification models like logistics model.
 
 Joaquim Lyrio - Created the structure of the project's code, such as the train, test and feature files; tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction; worked on the baseline model structure and tried to find more efficient ways to run it; wrote great part of the main.Rmd file
 
