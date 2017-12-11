@@ -19,11 +19,11 @@ Term: Fall 2017
 	
 **Contribution statement**: 
 
-Christina Huang - CNN model and HOG/CNN feature extraction
+Christina Huang - Established and optimized Convolution Neural Network(CNN/Python) model; worked on HOG and two versions (3/128 dimension) of CNN feature extraction; used flipping and rotation to expand dataset for 200% and significantly improve accuracy of CNN model for 40%; implemented all connection of Python code and .Rmd files.
 
 Henrique Saboya - Tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction, tried other different image segmentation as feature extractions, such as color matrix norms.
 
-Jing Zhao - LBP feature extraction and random forest model, tried other classification models like logistics model.
+Jing Zhao - Establied and optimized Random Forest(RF) model, used ggplot for visualizing its results; worked on LBP feature extraction and tried other classification models like logistics model; combined above models with .Rmd files.
 
 Joaquim Lyrio - Created the structure of the project's code, such as the train, test and feature files; tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction; worked on the baseline model structure and tried to find more efficient ways to run it; wrote great part of the main.Rmd file
 
