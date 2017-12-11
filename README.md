@@ -19,7 +19,7 @@ Term: Fall 2017
 	
 **Contribution statement**: 
 
-Christina Huang - Established and optimized Convolution Neural Network(CNN/Python) model; worked on HOG and two versions (3/128 dimension) of CNN feature extraction; used flipping and rotation to expand dataset for 200% and significantly improve accuracy of CNN model for 40%; implemented all connection of Python code and .Rmd files.
+Christina Huang - Established and optimized Convolution Neural Network(CNN/Python) model; worked on HOG and two versions (3/128 dimension) of CNN feature extraction; used flipping and rotation to expand dataset for 200% and significantly improve accuracy of CNN model for 40%; implemented all connection of Python code and CNN model with .Rmd files.
 
 Henrique Saboya - Tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction, tried other different image segmentation as feature extractions, such as color matrix norms.
 
@@ -27,7 +27,7 @@ Jing Zhao - Establied and optimized Random Forest(RF) model, used ggplot for vis
 
 Joaquim Lyrio - Created the structure of the project's code, such as the train, test and feature files; tested different models such as SVM, LDA, QDA; worked on HOG and PCA feature extraction; worked on the baseline model structure and tried to find more efficient ways to run it; wrote great part of the main.Rmd file
 
-Yi Zhang - Baseline model and Presentation
+Yi Zhang - Established and optimized the Baseline model; tried other advanced models like XGBoost model; Worked on the slides and Presentation.
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
